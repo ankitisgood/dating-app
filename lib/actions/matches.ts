@@ -1,6 +1,6 @@
 "use server";
 
-import { UserProfile } from "@/app/profile/page";
+import { UserProfile, UserPreferences } from "@/app/profile/page";
 import { createClient } from "../supabase/server";
 
 export async function getPotentialMatches(): Promise<UserProfile[]> {
@@ -33,7 +33,7 @@ export async function getPotentialMatches(): Promise<UserProfile[]> {
     throw new Error("Failed to get user preferences");
   }
 
-  const currentUserPrefs = userPrefs.preferences as any;
+  const currentUserPrefs = (userPrefs?.preferences ?? {}) as UserPreferences;
   const genderPreference = currentUserPrefs?.gender_preference || [];
   const filteredMatches =
     potentialMatches
