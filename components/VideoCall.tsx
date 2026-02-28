@@ -31,6 +31,8 @@ export default function VideoCall({
 
   useEffect(() => {
     let isMounted = true;
+    let localCall: Call | null = null;
+    let localClient: StreamVideoClient | null = null;
 
     async function initializeVideoCall() {
       if (hasJoined) {
@@ -66,6 +68,9 @@ export default function VideoCall({
 
         if (!isMounted) return;
 
+        localClient = videoClient;
+        localCall = videoCall;
+
         setClient(videoClient);
         setCall(videoCall);
         setHasJoined(true);
@@ -81,12 +86,12 @@ export default function VideoCall({
 
     return () => {
       isMounted = false;
-      if (call && hasJoined) {
-        call.leave();
+      if (localCall && hasJoined) {
+        localCall.leave();
       }
 
-      if (client) {
-        client.disconnectUser();
+      if (localClient) {
+        localClient.disconnectUser();
       }
     };
   }, [callId, isIncoming, hasJoined]);

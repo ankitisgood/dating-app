@@ -3,6 +3,7 @@
 import { getCurrentUserProfile } from "@/lib/actions/profile";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { calculateAge } from "@/lib/helpers/calculate-age";
 
 export interface UserProfile {
@@ -114,11 +115,13 @@ export default function ProfilePage() {
               <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
                 <div className="flex items-center space-x-6 mb-8">
                   <div className="relative">
-                    <div className="w-24 h-24 rounded-full overflow-hidden">
-                      <img
+                      <div className="w-24 h-24 rounded-full overflow-hidden relative">
+                      <Image
                         src={profile.avatar_url || "/default-avatar.png"}
                         alt={profile.full_name}
                         className="w-full h-full object-cover"
+                        fill
+                        sizes="96px"
                       />
                     </div>
                   </div>

@@ -394,7 +394,7 @@ export default function StreamChatInterface({
                 channel.keystroke();
               }
             }}
-            onFocus={(e) => {
+            onFocus={() => {
               if (channel) {
                 channel.keystroke();
               }
