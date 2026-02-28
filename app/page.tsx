@@ -99,3 +99,5 @@ export default function Home() {
 
 // 1:12 min an important thing is done Here which is pocket for image storage
 // started at 28 min 1:20 min
+
+// 1:56:00 second policies are changed

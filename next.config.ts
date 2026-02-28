@@ -14,6 +14,15 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  webpack: (config, { isServer }) => {
+    config.ignoreWarnings = [
+      {
+        module: /@supabase\/realtime-js/,
+        message: /the request of a dependency is an expression/,
+      },
+    ];
+    return config;
+  },
 };
 
 export default nextConfig;
