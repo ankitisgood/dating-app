@@ -12,8 +12,8 @@ import {
   useRef,
   useState,
 } from "react";
+import Image from "next/image";
 import { Channel, Event, StreamChat } from "stream-chat";
-import { text } from "stream/consumers";
 import VideoCall from "./VideoCall";
 
 interface Message {
@@ -31,8 +31,6 @@ export default function StreamChatInterface({
   otherUser: UserProfile;
   ref: RefObject<{ handleVideoCall: () => void } | null>;
 }) {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState<string>("");
@@ -61,27 +59,25 @@ export default function StreamChatInterface({
     setShowScrollButton(false);
   }
 
-  function handleScroll() {
-    if (messagesContainerRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } =
-        messagesContainerRef.current;
-      const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
-      setShowScrollButton(!isNearBottom);
-    }
-  }
-
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
   useEffect(() => {
     const container = messagesContainerRef.current;
+    function handleScroll() {
+      if (container) {
+        const { scrollTop, scrollHeight, clientHeight } = container;
+        const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+        setShowScrollButton(!isNearBottom);
+      }
+    }
 
     if (container) {
       container.addEventListener("scroll", handleScroll);
       return () => container.removeEventListener("scroll", handleScroll);
     }
-  }, [handleScroll]);
+  }, []);
 
   useEffect(() => {
     setShowVideoCall(false);
@@ -91,9 +87,10 @@ export default function StreamChatInterface({
     setCallerName("");
     setIsCallInitiator(false);
 
+    let localClient: StreamChat | null = null;
+
     async function initializeChat() {
       try {
-        setError(null);
 
         const { token, userId, userName, userImage } =
           await getStreamUserToken();
@@ -137,10 +134,14 @@ export default function StreamChatInterface({
         chatChannel.on("message.new", (event: Event) => {
           if (event.message) {
             if (event.message.text?.includes(`📹 Video call invitation`)) {
-              const customData = event.message as any;
+              const customData = event.message as unknown as {
+                caller_id?: string;
+                call_id?: string;
+                caller_name?: string;
+              };
 
               if (customData.caller_id !== userId) {
-                setIncomingCallId(customData.call_id);
+                setIncomingCallId(customData.call_id ?? "");
                 setCallerName(customData.caller_name || "Someone");
                 setIncomingCall(true);
               }
@@ -182,10 +183,10 @@ export default function StreamChatInterface({
 
         setClient(chatClient);
         setChannel(chatChannel);
-      } catch (error) {
+      } catch {
         router.push("/chat");
       } finally {
-        setLoading(false);
+        // loading state removed
       }
     }
 
@@ -194,11 +195,11 @@ export default function StreamChatInterface({
     }
 
     return () => {
-      if (client) {
-        client.disconnectUser();
+      if (localClient) {
+        localClient.disconnectUser();
       }
     };
-  }, [otherUser]);
+  }, [otherUser, router]);
 
   async function handleVideoCall() {
     try {
@@ -430,11 +431,13 @@ export default function StreamChatInterface({
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-sm mx-4 shadow-2xl">
             <div className="text-center">
-              <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 border-4 border-pink-500">
-                <img
+              <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 border-4 border-pink-500 relative">
+                <Image
                   src={otherUser.avatar_url}
                   alt={otherUser.full_name}
                   className="w-full h-full object-cover"
+                  fill
+                  sizes="80px"
                 />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">

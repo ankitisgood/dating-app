@@ -1,5 +1,6 @@
 import { UserProfile } from "@/app/profile/page";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 interface MatchNotificationProps {
   match: UserProfile;
@@ -42,17 +43,19 @@ export default function MatchNotification({
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6 max-w-sm">
         <div className="flex items-start space-x-4">
           <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
-            <img
+            <Image
               src={match.avatar_url}
               alt={match.full_name}
               className="w-full h-full object-cover"
+              fill
+              sizes="64px"
             />
           </div>
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                It's a Match! 🎉
+                It&apos;s a Match! 🎉
               </h3>
               <button
                 onClick={handleClose}
