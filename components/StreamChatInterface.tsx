@@ -109,6 +109,9 @@ export default function StreamChatInterface({
           token
         );
 
+        // keep a local reference for cleanup
+        localClient = chatClient;
+
         const { channelType, channelId } = await createOrGetChannel(
           otherUser.id
         );

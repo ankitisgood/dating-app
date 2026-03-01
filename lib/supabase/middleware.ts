@@ -53,9 +53,7 @@ export async function updateSession(request: NextRequest) {
   );
 
   // Check if the current path is public
-  const isPublicRoute = publicRoutes.some(
-    (route) => pathname === route || pathname.startsWith(route)
-  );
+  // (not used) const isPublicRoute intentionally omitted to avoid lint warnings
 
   // If user is not authenticated and trying to access protected routes
   if (!user && isProtectedRoute) {
