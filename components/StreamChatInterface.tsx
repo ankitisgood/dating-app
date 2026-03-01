@@ -87,7 +87,7 @@ export default function StreamChatInterface({
     setCallerName("");
     setIsCallInitiator(false);
 
-    let localClient: StreamChat | null = null;
+    const localClientRef: { current: StreamChat | null } = { current: null };
 
     async function initializeChat() {
       try {
@@ -110,7 +110,7 @@ export default function StreamChatInterface({
         );
 
         // keep a local reference for cleanup
-        localClient = chatClient;
+        localClientRef.current = chatClient;
 
         const { channelType, channelId } = await createOrGetChannel(
           otherUser.id
@@ -198,8 +198,8 @@ export default function StreamChatInterface({
     }
 
     return () => {
-      if (localClient) {
-        localClient.disconnectUser();
+      if (localClientRef.current) {
+        localClientRef.current.disconnectUser();
       }
     };
   }, [otherUser, router]);
