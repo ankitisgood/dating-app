@@ -17,10 +17,7 @@
     <img src="https://img.shields.io/badge/-TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
   </div>
   <h3 align="center">Build a FullStack Dating Website with Next.js, Supabase, Stream & TailwindCSS</h3>
-  <div align="center">
-    Follow the full video tutorial on 
-    <a href="https://youtu.be/8QDT776XtO8" target="_blank"><b>YouTube</b></a>
-  </div>
+  
   <br />
 </div>
 
